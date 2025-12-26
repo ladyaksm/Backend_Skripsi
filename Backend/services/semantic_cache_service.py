@@ -1,4 +1,5 @@
 import redis
+import os
 import json
 import numpy as np
 from numpy.linalg import norm
@@ -8,8 +9,15 @@ import base64
 from utils.logger import log_info, log_warning
 
 # Setup Redis connection
-r = redis.Redis(host="localhost", port=6379, db=1, decode_responses=True)  # pakai DB 1 khusus semantic cache
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 
+r = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=1,
+    decode_responses=True
+)
 # query spesifik nama
 def should_skip_semantic(question: str) -> bool:
     keywords = ["nama", "bernama", "siapa"]

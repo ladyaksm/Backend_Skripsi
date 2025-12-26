@@ -1,9 +1,18 @@
 import redis
+import os
 import json
 from utils.logger import log_info
 
 # Setup koneksi Redis localhost:6379
-cache = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+
+cache = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=0,
+    decode_responses=True
+)
 
 def get_cache(key: str):
     data = cache.get(key)

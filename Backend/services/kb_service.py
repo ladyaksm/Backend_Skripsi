@@ -14,9 +14,9 @@ import time
 from datetime import datetime
 import pytz
 from utils.extractName import extract_name_from_content
+import os
+from chromadb.config import Settings
 
-# CHROMA_PATH = "./chroma_db"
-CHROMA_PATH = "./chroma_db"
 JSON_PATH = "processed/structured.json"
 UPLOAD_FOLDER = "./uploads"
 
@@ -24,13 +24,23 @@ tz = pytz.timezone("Asia/Jakarta")
 created_at = datetime.now(tz).isoformat()
 
 
+CHROMA_HOST = os.getenv("CHROMA_HOST", "chromadb")
+CHROMA_PORT = int(os.getenv("CHROMA_PORT", 8000))
+
 def get_client():
-    return chromadb.PersistentClient(path=CHROMA_PATH) #inisialisasi klien ChromaDB
+    return chromadb.HttpClient(
+        host=CHROMA_HOST,
+        port=CHROMA_PORT,
+        settings=Settings(
+            anonymized_telemetry=False
+        )
+    )
 
 def get_collection():
     client = get_client()
-    return client.get_or_create_collection("informasi_docs") #mengambil atau membuat koleksi baru bernama "informasi_docs"
-
+    return client.get_or_create_collection(
+        name="informasi_docs"
+    )
 
 # Helper JSON
 def _load_json():

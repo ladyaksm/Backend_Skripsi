@@ -58,22 +58,23 @@ def query_index(question: str):
     if groq_client is not None:
         try:
             prompt = f"""
-You are a helpful assistant that answers questions based ONLY on the following documents.
-Do NOT invent facts. If the answer is not present, state you don't know.
+            You are a helpful assistant that answers questions based ONLY on the following documents.
+            Do NOT invent facts. If the answer is not present, state you don't know.
 
-Documents:
-{context}
+            Documents:
+            {context}
 
-Question: {question}
+            Question: {question}
 
-Answer concisely in Indonesian (max ~200 words). Start with one short sentence summarizing whether the docs include the answer.
-"""
+            Answer concisely in Indonesian (max ~200 words). Start with one short sentence summarizing whether the docs include the answer.
+            """
             resp = groq_client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.2
+                temperature=1
             )
             text = resp.choices[0].message.content.strip()
+            
         except Exception as e:
             log_warning(f"[WARNING] Groq LLM gagal dipanggil: {e}")
             text = "Tidak ada LLM aktif — fallback jawaban kosong."
